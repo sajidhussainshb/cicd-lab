@@ -12,16 +12,8 @@ jobs:
     steps:
       - name: Trigger Jenkins Build
         run: |
-          crumb=$(curl -s \
+          echo "Testing crumb endpoint..."
+          curl -v \
             -u ${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }} \
             -H "ngrok-skip-browser-warning: true" \
-            "https://${{ secrets.JENKINS_URL }}/crumbIssuer/api/json" \
-            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['crumb'])")
-
-          curl -s -X POST \
-            -u ${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }} \
-            -H "Jenkins-Crumb: $crumb" \
-            -H "ngrok-skip-browser-warning: true" \
-            "https://${{ secrets.JENKINS_URL }}/job/cicd-lab/build"
-
-          echo "Jenkins trigger sent successfully"
+            "https://${{ secrets.JENKINS_URL }}/crumbIssuer/api/json"
